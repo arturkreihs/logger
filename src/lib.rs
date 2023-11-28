@@ -2,6 +2,7 @@ use std::io::Write;
 use std::time::Instant;
 use thiserror::Error;
 use std::path::Path;
+use colored::Colorize;
 
 #[derive(Error, Debug)]
 pub enum LoggerError {
@@ -23,19 +24,31 @@ pub fn init() -> Result<(), LoggerError> {
         .ok_or_else(|| LoggerError::FileName)?
         .to_str()
         .ok_or_else(|| LoggerError::NameStr)?
-        .to_owned();
+        .to_owned()
+        .cyan();
 
     env_logger::Builder::from_env("LOGLEVEL")
         .format(move |buf, record| {
             let time = Instant::now()
                 .duration_since(start_time)
                 .as_secs();
+            let level = {
+                let lvl_str = record.level().to_string();
+                match record.level() {
+                    log::Level::Error => lvl_str.red(),
+                    log::Level::Warn => lvl_str.yellow(),
+                    log::Level::Info => lvl_str.green(),
+                    log::Level::Debug => lvl_str.blue(),
+                    log::Level::Trace => lvl_str.purple(),
+                }
+            };
+
             writeln!(
                 buf,
                 "[{}] {}: {}: {}",
                 time,
                 appname,
-                record.level(),
+                level,
                 record.args()
             )
         })
