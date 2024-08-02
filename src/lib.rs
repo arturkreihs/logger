@@ -18,12 +18,12 @@ pub fn init() -> Result<(), LoggerError> {
     let start_time = Instant::now();
     let fullpath = std::env::args()
         .next()
-        .ok_or_else(|| LoggerError::FullPath)?;
+        .ok_or(LoggerError::FullPath)?;
     let appname = Path::new(&fullpath)
         .file_name()
-        .ok_or_else(|| LoggerError::FileName)?
+        .ok_or(LoggerError::FileName)?
         .to_str()
-        .ok_or_else(|| LoggerError::NameStr)?
+        .ok_or(LoggerError::NameStr)?
         .to_owned()
         .cyan();
 
