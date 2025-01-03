@@ -32,15 +32,12 @@ pub fn init() -> Result<(), LoggerError> {
             let time = Instant::now()
                 .duration_since(start_time)
                 .as_secs();
-            let level = {
-                let lvl_str = record.level().to_string();
-                match record.level() {
-                    log::Level::Error => lvl_str.red(),
-                    log::Level::Warn => lvl_str.yellow(),
-                    log::Level::Info => lvl_str.green(),
-                    log::Level::Debug => lvl_str.blue(),
-                    log::Level::Trace => lvl_str.purple(),
-                }
+            let level = match record.level() {
+                log::Level::Error => "ERROR".red(),
+                log::Level::Warn => "WARN".yellow(),
+                log::Level::Info => "INFO".green(),
+                log::Level::Debug => "DEBUG".blue(),
+                log::Level::Trace => "TRACE".purple(),
             };
 
             writeln!(
