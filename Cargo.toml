@@ -10,7 +10,7 @@ chrono = { optional = true, version = "0.4.39", default-features = false, featur
 lazy_static = { optional = true, version = "1.5.0", default-features = false }
 colored = { version = "2.2.0", default-features = false }
 env_logger = { version = "0.10.2", default-features = false }
-log = { version = "0.4.22", default-features = false, features = ["std"] }
+log = { version = "0.4.25", default-features = false, features = ["std"] }
 thiserror = "1.0.69"
 
 [features]

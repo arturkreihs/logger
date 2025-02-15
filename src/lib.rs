@@ -43,7 +43,8 @@ pub fn init() -> Result<(), LoggerError> {
                 .as_secs();
 
             #[cfg(feature = "chrono")]
-            let time = Local::now().format_with_items(FORMAT.iter());
+            let time = Local::now()
+                .format_with_items(FORMAT.iter());
 
             let level = match record.level() {
                 log::Level::Error => "ERROR".red(),
