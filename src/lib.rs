@@ -3,7 +3,7 @@ use thiserror::Error;
 use std::path::Path;
 use colored::Colorize;
 #[cfg(not(feature = "chrono"))] use std::time::Instant;
-#[cfg(feature = "chrono")] use chrono::{Local, format::{Item, StrftimeItems}};
+#[cfg(feature = "chrono")] use chrono::{Utc, Duration, format::{Item, StrftimeItems}};
 
 #[derive(Error, Debug)]
 pub enum LoggerError {
@@ -13,6 +13,10 @@ pub enum LoggerError {
     FileName,
     #[error("Name is not valid UTF-8")]
     NameStr,
+    #[error("Time zone env variable not set")]
+    TimeZoneEnv,
+    #[error("Can't parse time zone variable")]
+    TimeZoneParse,
 }
 
 #[cfg(feature = "chrono")]
@@ -35,6 +39,11 @@ pub fn init() -> Result<(), LoggerError> {
         .to_owned()
         .cyan();
 
+    let offset: i64 = std::env::var("TZ").ok()
+        .ok_or(LoggerError::TimeZoneEnv)?
+        .parse().ok()
+        .ok_or(LoggerError::TimeZoneParse)?;
+
     env_logger::Builder::from_env("LOGLEVEL")
         .format(move |buf, record| {
             #[cfg(not(feature = "chrono"))]
@@ -43,7 +52,7 @@ pub fn init() -> Result<(), LoggerError> {
                 .as_secs();
 
             #[cfg(feature = "chrono")]
-            let time = Local::now()
+            let time = (Utc::now() + Duration::hours(offset))
                 .format_with_items(FORMAT.iter());
 
             let level = match record.level() {
