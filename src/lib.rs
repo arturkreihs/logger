@@ -39,8 +39,9 @@ pub fn init() -> Result<(), LoggerError> {
         .to_owned()
         .cyan();
 
+    #[cfg(feature = "chrono")]
     let offset: i64 = std::env::var("TZ").ok()
-        .ok_or(LoggerError::TimeZoneEnv)?
+        .unwrap_or(0)
         .parse().ok()
         .ok_or(LoggerError::TimeZoneParse)?;
 
